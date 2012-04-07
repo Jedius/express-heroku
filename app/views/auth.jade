@@ -1,0 +1,32 @@
+#auth.container
+    .row
+        span.span6
+                #authHeaders
+                    H2 Hello world!
+        span.span6
+                #authForms
+                    form.form-horizontal
+                        fieldset
+                            legend Please, type your email and password
+                            #authEmail.control-group
+                                label.control-label email:
+                                .controls
+                                    input.input-large(type='email', placeholder='email')
+                                    br
+                                    span.help-block
+                            #authPassword.control-group
+                                label.control-label(for='password') password:
+                                .controls
+                                    input.input-large(type='password', placeholder='password')
+                                    br
+                                    span.help-block
+                            .control-group
+                                input.btn.btn-warning.btn-auth#signUp(type='submit',value='Sign up')
+                                input.btn.btn-success.btn-auth#signIn(type='submit',value='Sign in')
+                            #oAuth
+                                #oAuth-header Or you can sign in via:
+                                #oAuth-buttons
+                                    button.btn.btn-info.btn-auth#twitter Twitter
+                                    button.btn.btn-info#facebook Facebook
+                            p#authAgree.help-block By clicking this buttons, you agree to our 
+                                a#terms(href='#') Terms and Conditions

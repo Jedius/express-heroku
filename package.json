@@ -1,0 +1,24 @@
+{
+    "name": "express-heroku",
+    "version": "0.0.1",
+    "private": true,
+    "engines": {
+        "node": ">=0.6.10",
+        "npm":  ">=1.1.x"
+    },
+    "dependencies": {
+        "coffee-script": "",
+        "less": "",
+        "stylus": "",
+        "nib": "",
+        "connect-assets": "",
+        "express": "",
+        "jade": "",
+        "mongoose": "",
+        "redis": "",
+        "async": "",
+        "underscore": "",
+        "oauth": "",
+        "redis-url": "0.0.1"
+    }
+}
