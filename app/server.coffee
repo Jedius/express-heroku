@@ -54,7 +54,7 @@ glob.decrypt = (str)->
 glob.log = (msg)->
     console.log new Date(),msg
 
-glob.app = app = express.createServer()
+glob.app = app = express()
 
 app.configure ->
     app.set "views", __dirname + '/views'
@@ -78,4 +78,6 @@ app.configure "production", ->
 require './lib/router'
 app.listen glob.config.app.port
 
-console.log 'Server start on port %d in %s mode', app.address().port, app.settings.env
+#console.log 'Server start on port %d in %s mode', app.address().port, app.settings.env
+#console.log 'Server start on port %d in %s mode', app
+#console.log app
