@@ -23,5 +23,3 @@ Scale: heroku ps:scale web=1
 See logs: heroku logs
 
 Go to your application! URL you will see in console.
-
-For auth via Facebook, you will need create app on facebook, bind redirect url, and copy id to app/assets/js/main.coffee
