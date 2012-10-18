@@ -1,0 +1,9 @@
+#topbar.navbar.navbar-fixed-top
+    .navbar-inner
+        .container
+            a#logo.brand(href='/') Express-heroku
+            button#logout.btn.btn-inverse Sign out 
+            a#name.brand= session.user.name
+#content
+    .padding-10
+        | content

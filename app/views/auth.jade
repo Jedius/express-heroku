@@ -26,7 +26,11 @@
                             #oAuth
                                 #oAuth-header Or you can sign in via:
                                 #oAuth-buttons
-                                    button.btn.btn-info.btn-auth#twitter Twitter
-                                    button.btn.btn-info#facebook Facebook
+                                    button.btn.btn-info.btn-oauth#twitter Twitter
+                                    button.btn.btn-info.btn-oauth#facebook Facebook
+                                    button.btn.btn-info.btn-oauth#linkedIn LinkedIn
                             p#authAgree.help-block By clicking this buttons, you agree to our 
                                 a#terms(href='#') Terms and Conditions
+- if (error)
+    script
+        alert('#{error}')

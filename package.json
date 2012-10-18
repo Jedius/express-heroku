@@ -3,8 +3,8 @@
     "version": "0.0.1",
     "private": true,
     "engines": {
-        "node": ">=0.6.10",
-        "npm":  ">=1.1.x"
+        "node": "0.8.x",
+        "npm":  "1.1.x"
     },
     "dependencies": {
         "coffee-script": "",
@@ -12,13 +12,15 @@
         "stylus": "",
         "nib": "",
         "connect-assets": "",
-        "express": "",
+        "express": "2.x",
         "jade": "",
         "mongoose": "",
         "redis": "",
         "async": "",
         "underscore": "",
         "oauth": "",
-        "redis-url": "0.0.1"
+        "redis-url": "0.0.1",
+        "everyauth": "https://github.com/bnoguchi/everyauth/tarball/master",
+        "connect-redis": ""
     }
 }

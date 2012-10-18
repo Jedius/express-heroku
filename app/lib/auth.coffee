@@ -3,7 +3,81 @@ redis = glob.redis
 session = {}
 twitter = {}
 
+glob.modules.everyauth.facebook
+    .appId(glob.config.facebook.key)
+    .appSecret(glob.config.facebook.secret)
+    .moduleTimeout(20000)
+    .scope('email')  
+    .fields('id,name,email,first_name,last_name') 
+    .handleAuthCallbackError((req, res) ->
+        console.log 'handleError'
+    ).findOrCreateUser((session, accessToken, accessTokExtra, fbUserMetadata) ->
+        promise = this.Promise()
+        glob.mongo.user.findOne {facebookId: fbUserMetadata.id}, (err,user)->
+            console.log err if err
+            user = new glob.mongo.user() unless user
+            user.facebookId = fbUserMetadata.id
+            user.facebookName = fbUserMetadata.first_name + ' ' + fbUserMetadata.last_name
+            user.email = fbUserMetadata.email
+            user.facebookToken = accessToken
+            user.name = user.facebookName unless user.name
+            user.save (err)->
+                console.log err if err
+            session.user = user
+            promise.fulfill user
+        return promise
+    ).redirectPath "/"
+
+glob.modules.everyauth.twitter
+    .consumerKey(glob.config.twitter.key)
+    .consumerSecret(glob.config.twitter.secret)
+    .moduleTimeout(20000)
+    .findOrCreateUser((session, accessToken, accessTokenSecret, twitterUserMetadata) ->
+        promise = this.Promise()
+        glob.mongo.user.findOne {twitterId: twitterUserMetadata.id}, (err,user)->
+            console.log err if err
+            user = new glob.mongo.user() unless user
+            user.twitterId = twitterUserMetadata.id
+            user.twitterName = twitterUserMetadata.name
+            user.twitterToken = accessToken
+            user.twitterSecret = accessTokenSecret
+            user.name = user.twitterName unless user.name
+            user.save (err)->
+                console.log err if err
+            session.user = user
+            promise.fulfill user
+        return promise
+    ).redirectPath "/"
+
+glob.modules.everyauth.linkedin
+    .consumerKey(glob.config.linkedin.key)
+    .consumerSecret(glob.config.linkedin.secret)
+    .moduleTimeout(20000)
+    .findOrCreateUser((session, accessToken, accessTokenSecret, linkedinUserMetadata) ->
+        promise = this.Promise()
+        glob.mongo.user.findOne {linkedinId: linkedinUserMetadata.id}, (err,user)->
+            console.log err if err
+            user = new glob.mongo.user() unless user
+            user.linkedinId = linkedinUserMetadata.id
+            user.linkedinName = linkedinUserMetadata.firstName + ' ' + linkedinUserMetadata.lastName
+            user.linkedinToken = accessToken
+            user.linkedinSecret = accessTokenSecret
+            user.name = user.linkedinName unless user.name
+            user.save (err)->
+                console.log err if err
+            session.user = user
+            promise.fulfill user
+        return promise
+    ).redirectPath "/"
+
+glob.modules.everyauth.everymodule.findUserById (userId, cb)->
+    glob.mongo.user.findById userId, cb
+
 exports.check = (req, res, next) ->
+    console.log req.session
+    console.log req.user
+    next()
+    return
     req.session = {}
     req.errors = {}
     req.cookies.sid = req.query.sid if req.query.sid
@@ -60,80 +134,14 @@ exports.signIn = (req,res,next)->
         req.user = user
         next()
 
-exports.facebook = (req,res,next)->
-    req.oa = new glob.modules.oauth.OAuth2 glob.config.facebook.key, glob.config.facebook.secret, "https://graph.facebook.com", "/dialog/oauth"
-    req.oa.get "https://graph.facebook.com/me", req.query.token, (err, data)->
-        if err
-            console.error err
-            return res.send errors: {oa: 'oa error'}
-        unless data
-            console.error 'oauth facebook no data'
-            return res.send errors: {oa: 'oa error'}
-        req.fbData = JSON.parse data
-        mongo.user.findOne {facebookId: req.fbData.id} , (err, user)->
-            if err
-                console.error err
-                return res.send errors: {db: 'db error'}
-            unless user
-                user = new mongo.user
-                  facebookId: req.fbData.id
-                  facebookName: req.fbData.name
-                user.save (err)->
-                    console.error err if err
-            req.user = user
-            req.tokens = req.query.token
-            next()
-
-twitter.init = (req) ->
-    new glob.modules.oauth.OAuth("https://twitter.com/oauth/request_token", "https://twitter.com/oauth/access_token", glob.config.twitter.key, glob.config.twitter.secret, "1.0", "http://" + req.headers.host + "/auth/twitter/callback", "HMAC-SHA1")
-
-twitter.start = (req,res,next)->
-    twitter.init(req).getOAuthRequestToken (err, token, secret, results) ->
-        if err
-            console.error err
-            return res.send errors: {oa: 'oa error'}
-        unless token and secret
-            console.error 'twitter oa: token/secret not exist'
-            return res.send errors: {oa: 'oa error'}
-        redis.set 'token:twitter:'+token, secret
-        res.send redirect: 'https://twitter.com/oauth/authenticate?oauth_token='+token
-
-twitter.callback = (req, res, next) ->
-    redis.get "token:twitter:" + req.query.oauth_token, (err, secret) ->
-        if err
-            console.error err
-            return res.send errors: {db: 'db error'}
-        unless secret
-            console.error 'token not found'
-            return res.send errors: {request: 'token not found'}
-        redis.del "token:twitter:" + req.query.oauth_token
-        twitter.init(req).getOAuthAccessToken req.query.oauth_token, secret, req.query.oauth_verifier, (err, access_token, access_secret, results) ->
-            if err
-                console.error err
-                return res.send errors: {oa: 'oa error'}
-            unless access_token and access_secret and results
-                console.error 'oa twitter error'
-                return res.send errors: {oa: 'oa error'}
-            mongo.user.findOne {twitterId: results.user_id}, (err, user) ->
-                if err
-                    console.error err
-                    return res.send errors: {db: 'db error'}
-                unless user
-                    user = new mongo.user
-                        twitterId: results.user_id
-                        twitterName: results.screen_name
-                    user.save (err)->
-                        console.error err if err
-                req.user = user
-                req.tokens = 
-                    token: access_token
-                    secret: access_secret
-                next()
-
 session.start = (req, res, next) ->
     req.session =
-        name: req.user.email or req.user.facebookName or "@" + req.user.twitterName
+        name: req.user.name or req.user.email or req.user.facebookName or req.user.twitterName
         userAgent: req.headers["user-agent"]
+        partner: ''
+        teacher: req.user.teacher
+    if req.session.name.match glob.var.emailRegExp then req.session.name = req.session.name.split('@')[0]
+    req.session.name = req.session.name.replace(/\ /g,'_')
     req.session.tokens = req.tokens if req.tokens
     redis.set "session:" + req.user._id, JSON.stringify(req.session)
     redis.expire "session:" + req.user._id, glob.config.app.sessionTime
@@ -147,5 +155,4 @@ session.stop = (req,res,next) ->
         req.session.id = null
     next()
 
-module.exports.twitter = twitter
 module.exports.session = session
