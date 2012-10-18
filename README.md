@@ -1,4 +1,3 @@
-express-heroku
 Simple node.js server for heroku, based on express, with sessions and oauth
 
 Quick start
