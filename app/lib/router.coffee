@@ -56,8 +56,6 @@ signIn = (req,res,next)->
         else unless user
             res.send errors: [['email','wrong combination'], ['password','wrong combination']]
         else
-            user.access.push date: new Date()
-            user.access[0].remove() if user.access.length > glob.config.app.authPerDay-1
             user.save()
             req.session.user = user
             next()
