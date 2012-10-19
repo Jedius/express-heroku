@@ -5,8 +5,8 @@ Clone the repo, git clone https://github.com/Jedius/express-heroku
 
 Create account on heroku (http://www.heroku.com/)
 
-Install heroku toolbet: wget -qO- https://toolbelt.heroku.com/install.sh | sh
-
+Install heroku toolbet: https://toolbelt.heroku.com/ ; for linux: wget -qO- https://toolbelt.heroku.com/install-ubuntu.sh | sh
+    
 Login: heroku login
 
 Create instance: heroku create --stack cedar
