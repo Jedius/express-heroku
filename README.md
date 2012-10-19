@@ -15,10 +15,14 @@ Install redis: heroku addons:add redistogo
 
 Install mongodb: heroku addons:add mongohq:free
 
+Configure: heroku config:add NODE_ENV=production
+
 Deploy: git push heroku master
 
 Scale: heroku ps:scale web=1
 
+Rename: heroku apps:rename newname
+
 See logs: heroku logs
 
-Go to your application! URL you will see in console.
+Go to your application! {newname}.herokuapp.com
