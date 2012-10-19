@@ -1,15 +1,15 @@
 if process.env.NODE_ENV is 'production'
     config = 
         app: 
-            name: 'auth'
+            name: 'express'
             protocol: 'https://'
             domain: '.herokuapp.com'
-            port: process.env.PORT or 4600
+            port: process.env.PORT or 3500
             maxAge: 3*60*60*1000, #sec
-            secretString: 'someSecretString'
+            secretString: 'secretString'
             authPerHour: 3
             authPerDay: 9
-            host: 'websell.herokuapp.com'
+            host: 'express.herokuapp.com'
         deployEnv: process.env.DEPLOY_ENV or 'dev'
         redisURL: glob.modules.url.parse(process.env.REDISTOGO_URL)
         mongoURL: process.env.MONGOHQ_URL
@@ -25,15 +25,15 @@ if process.env.NODE_ENV is 'production'
 else
     config = 
         app: 
-            name: 'auth'
+            name: 'express'
             protocol: 'http://'
             domain: ''
-            port: 4600
-            secretString: 'someSecretString'
+            port: process.env.PORT or 3500
+            secretString: 'secretString'
             maxAge: 3*60*60*1000, #sec
             host: 'localhost'
         redisURL: glob.modules.url.parse 'redis://localhost:6379'
-        mongoURL: 'mongodb://localhost/authBabycarrot'
+        mongoURL: 'mongodb://localhost/express'
         twitter: 
             key: 'JLCGyLzuOK1BjnKPKGyQ'
             secret: 'GNqKfPqtzOcsCtFbGTMqinoATHvBcy1nzCTimeA9M0'
