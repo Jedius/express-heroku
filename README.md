@@ -13,7 +13,7 @@ Create instance: heroku create --stack cedar
 
 Install redis: heroku addons:add redistogo
 
-Install mongodb: heroku addons:add mongohq:free
+Install mongodb: heroku addons:add mongohq
 
 Configure: heroku config:add NODE_ENV=production
 
